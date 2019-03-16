@@ -15,6 +15,13 @@ library(tidyverse)
 library(mvnfast)
 library(Rfast)
 
+## Mapping
+library(leaflet)
+library(rgdal)
+library(rmapshaper)
+library(sf)
+library(sp)
+
 #### PARTY COLORS ####
 party_labels <- c("pp" = "People's Party (PP)",
                   "psoe" = "Socialist Workers' Party (PSOE)",
