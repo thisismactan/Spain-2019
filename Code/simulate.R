@@ -25,7 +25,7 @@ poll_cov <- (polls_2019.logit %>%
 set.seed(2019)
 
 # National popular vote
-n.iter <- 10000
+n.iter <- 25000
 simulations <- rmvn(n.iter, means, poll_cov + error_cov) %>%
   invlogit() %>%
   t()
@@ -71,13 +71,14 @@ provincial_seats <- results_2016 %>%
   pull(total_seats)
 
 
-# Regional simulations: distribute seats
+## Regional simulations: distribute seats
 province_sims <- rep(list(simulated_swings), 52)
 province_seatsims <- vector("list", 52)
 
 for(i in 1:52) {
   ## Distribute initial seats
   province_sims[[i]] <- pmax(province_sims[[i]] + results_2016.wide[i,], 0)
+  province_sims[[i]][10,] <- ((1 - colSums(province_sims[[i]][1:9,], na.rm = TRUE)) + province_sims[[i]][10,])/2
   province_sims[[i]][province_sims[[i]] < 0.03] <- 0
   province_seatsims[[i]] <- floor(province_sims[[i]]*provincial_seats[i])
   province_sims[[i]] <- province_sims[[i]]/rep(colSums(province_sims[[i]], na.rm = TRUE), each = 10)
@@ -107,3 +108,46 @@ for(i in 1:52) {
   }
 }
 
+## Reshape into tibble
+provinces_ordered <- results_2016 %>%
+  dplyr::select(list, pct) %>%
+  spread(list, pct) %>%
+  ungroup()
+
+province_simulations_list <- province_seatsims %>%
+  lapply(t) %>%
+  lapply(as.data.frame) %>%
+  lapply(as.tbl)
+
+for(i in 1:52) {
+  province_simulations_list[[i]] <- province_simulations_list[[i]] %>%
+    mutate(sim_number = 1:n(),
+           community = provinces_ordered$community[i],
+           community_name = provinces_ordered$community_name[i],
+           province = provinces_ordered$province[i],
+           province_name = provinces_ordered$province_name[i])
+}
+
+province_simulations_tbl <- bind_rows(province_simulations_list) %>%
+  dplyr::select(community, province, community_name, province_name, sim_number, everything()) %>%
+  melt(id.vars = c("community", "province", "community_name", "province_name", "sim_number"),
+       variable.name = "party", value.name = "seats") %>%
+  as.tbl()
+
+## National results
+simulation_results.natl <- province_simulations_tbl %>%
+  group_by(sim_number, party) %>%
+  summarise(seats = sum(seats, na.rm = TRUE))
+
+## Distribution
+distributions <- simulation_results.natl %>%
+  group_by(party) %>%
+  summarise(mean = mean(seats),
+            sd = sd(seats),
+            pct_5 = quantile(seats, 0.05),
+            pct_25 = quantile(seats, 0.25),
+            pct_50 = quantile(seats, 0.5),
+            pct_75 = quantile(seats, 0.75),
+            pct_95 = quantile(seats, 0.95))
+
+distributions
