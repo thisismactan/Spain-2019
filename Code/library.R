@@ -13,6 +13,7 @@ library(tidyverse)
 
 ## Simulation
 library(mvnfast)
+library(Rfast)
 
 #### PARTY COLORS ####
 party_labels <- c("pp" = "People's Party (PP)",
@@ -24,8 +25,11 @@ party_labels <- c("pp" = "People's Party (PP)",
                   "basque_nationalist" = "Basque National Party (EAJ)",
                   "animalist" = "Animalist",
                   "eh_bildu" = "EH Bildu",
-                  "canarian_coalition" = "Canarian Coalition (CC)",
+                  "canarian_coalition" = "Canarian Coalition",
+                  "compromis" = "Coalició Compromís",
                   "vox" = "Vox")
+
+Encoding(party_labels) <- "UTF-8"
 
 party_colors <- c("pp" = "#008CD7",
                   "psoe" = "red",
@@ -37,10 +41,11 @@ party_colors <- c("pp" = "#008CD7",
                   "animalist" = "darkolivegreen",
                   "eh_bildu" = "deeppink",
                   "canarian_coalition" = "yellow",
+                  "compromis" = "#E78955",
                   "vox" = "#5AC035")
 
-major_party_labels <- party_labels[c(1:4, 11)]
-major_party_colors <- party_colors[c(1:4, 11)]
+major_party_labels <- party_labels[c(1:4, 12)]
+major_party_colors <- party_colors[c(1:4, 12)]
 
 #### CUSTOM FUNCTIONS ####
 fread_to_tbl <- function(file) {

@@ -23,7 +23,7 @@ polls_2019.dirty <- rvest::html_nodes(polls_GET, css = "table")[1] %>%
   filter(Fieldwork.date != "", Polling.firm.Commissioner != "2016 general election")
 
 names(polls_2019.dirty) <- c("pollster", "dates", "n", "projected_turnout", "pp", "psoe", "up", "ciudadanos", "catalan_republican", "catalan_european_democrat",
-                             "basque_nationalist", "animalist", "eh_bildu", "canarian_coalition", "vox", "lead")
+                             "basque_nationalist", "animalist", "eh_bildu", "canarian_coalition", "vox", "compromis", "lead")
 
 ## Parse fieldwork dates
 poll_dates <- polls_2019.dirty$dates %>%

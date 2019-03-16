@@ -2,7 +2,9 @@
 source("Code/poll_scrape_clean.R") # get polls
 
 #### 2011 ####
-results_2011.natl <- results_2011 %>%
+results_2011.natl <- process_spain_data(2011) %>%
+  left_join(community_key) %>%
+  left_join(province_key) %>%
   mutate(total_votes = sum(votes, na.rm = TRUE)) %>%
   group_by(party, total_votes) %>%
   summarise(party_votes = sum(votes, na.rm = TRUE)) %>%
@@ -26,7 +28,9 @@ results_2011.logit <- results_2011.natl %>%
   mutate(pct_logit = logit(pct))
 
 #### 2015 ####
-results_2015.natl <- results_2015 %>%
+results_2015.natl <- process_spain_data(2015) %>%
+  left_join(community_key) %>%
+  left_join(province_key) %>%
   mutate(total_votes = sum(votes, na.rm = TRUE)) %>%
   group_by(party, total_votes) %>%
   summarise(party_votes = sum(votes, na.rm = TRUE)) %>%
@@ -54,7 +58,9 @@ results_2015.logit <- results_2015.natl %>%
   mutate(pct_logit = logit(pct))
 
 #### 2016 ####
-results_2016.natl <- results_2016 %>%
+results_2016.natl <- process_spain_data(2016) %>%
+  left_join(community_key) %>%
+  left_join(province_key) %>%
   mutate(total_votes = sum(votes, na.rm = TRUE)) %>%
   group_by(party, total_votes) %>%
   summarise(party_votes = sum(votes, na.rm = TRUE)) %>%
@@ -162,7 +168,7 @@ error_cov_2016 <- (error_2016 %>%
 
 error_cov <- (error_cov_2011/8 + error_cov_2015/4 + error_cov_2016/3)*(24/17)
 
-## Add in new parties: Catalan European Democrats, Animalists, Vox (covariance 0)
+## Add in new parties: Catalan European Democrats, Vox (covariance 0)
 catalan_european_democrat <- rep(0, nrow(error_cov))
 error_cov <- cbind(error_cov, 0)
 catalan_european_democrat <- c(catalan_european_democrat, error_cov[5,5] + error_cov[6,6])

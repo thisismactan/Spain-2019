@@ -1,53 +1,53 @@
-﻿province,province_name
-1,Araba - Álava
-2,Albacete
-3,Alicante
-4,Almería
-5,Ávila
-6,Badajoz
-7,Illes Balears (Baleares)
-8,Barcelona
-9,Burgos
-10,Cáceres
-11,Cádiz
-12,Castellón / Castelló
-13,Ciudad Real
-14,Córdoba
-15,A Coruña
-16,Cuenca
-17,Girona (Gerona)
-18,Granada
-19,Guadalajara
-20,Gipuzkoa (Guipúzcoa)
-21,Huelva
-22,Huesca
-23,Jaén
-24,León
-25,Lleida (Lérida)
-26,La Rioja (Logroño)
-27,Lugo
-28,Madrid
-29,Málaga
-30,Murcia
-31,Navarra
-32,Ourense (Orense)
-33,Asturias (Oviedo)
-34,Palencia
-35,Las Palmas
-36,Pontevedra
-37,Salamanca
-38,Santa Cruz de Tenerife
-39,Cantabria (Santander)
-40,Segovia
-41,Sevilla
-42,Soria
-43,Tarragona
-44,Teruel
-45,Toledo
-46,Valencia / València
-47,Valladolid
-48,Bizkaia (Vizcaya)
-49,Zamora
-50,Zaragoza
-51,Ceuta
-52,Melilla
+﻿province,province_name,total_seats
+1,Araba - Álava,4
+2,Albacete,4
+3,Alicante,12
+4,Almería,6
+5,Ávila,3
+6,Badajoz,6
+7,Illes Balears (Baleares),8
+8,Barcelona,31
+9,Burgos,4
+10,Cáceres,4
+11,Cádiz,9
+12,Castellón / Castelló,5
+13,Ciudad Real,5
+14,Córdoba,6
+15,A Coruña,8
+16,Cuenca,3
+17,Girona (Gerona),6
+18,Granada,7
+19,Guadalajara,3
+20,Gipuzkoa (Guipúzcoa),6
+21,Huelva,5
+22,Huesca,3
+23,Jaén,5
+24,León,4
+25,Lleida (Lérida),4
+26,La Rioja (Logroño),4
+27,Lugo,4
+28,Madrid,36
+29,Málaga,11
+30,Murcia,10
+31,Navarra,5
+32,Ourense (Orense),4
+33,Asturias (Oviedo),8
+34,Palencia,3
+35,Las Palmas,8
+36,Pontevedra,7
+37,Salamanca,4
+38,Santa Cruz de Tenerife,7
+39,Cantabria (Santander),5
+40,Segovia,3
+41,Sevilla,12
+42,Soria,2
+43,Tarragona,6
+44,Teruel,3
+45,Toledo,6
+46,Valencia / València,16
+47,Valladolid,5
+48,Bizkaia (Vizcaya),8
+49,Zamora,3
+50,Zaragoza,7
+51,Ceuta,1
+52,Melilla,1
