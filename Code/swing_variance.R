@@ -23,3 +23,7 @@ psoe_swingmodel <- lmer(swing~(1|community_name), data = psoe_swings)
 ciudadanos_swingmodel <- lmer(swing~(1|community_name), data = ciudadanos_swings)
 up_swingmodel <- lmer(swing~(1|community_name), data = up_swings)
 
+pp_swingmodel.summary <- summary(pp_swingmodel)
+psoe_swingmodel.summary <- summary(psoe_swingmodel)
+ciudadanos_swingmodel.summary <- summary(ciudadanos_swingmodel)
+up_swingmodel.summary <- summary(up_swingmodel)

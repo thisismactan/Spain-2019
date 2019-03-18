@@ -71,15 +71,49 @@ provincial_seats <- results_2016 %>%
   left_join(province_key) %>%
   pull(total_seats)
 
+## Order of provinces
+provinces_ordered <- results_2016 %>%
+  dplyr::select(list, pct) %>%
+  spread(list, pct) %>%
+  ungroup()
 
-## Regional simulations: distribute seats
+## Add community- and province-level noise
+community_sd.pp <- sqrt(pp_swingmodel.summary$varcor$community_name)
+community_sd.psoe <- sqrt(psoe_swingmodel.summary$varcor$community_name)
+community_sd.ciudadanos <- sqrt(ciudadanos_swingmodel.summary$varcor$community_name)
+community_sd.up <- sqrt(up_swingmodel.summary$varcor$community_name)
+community_sd.vox <- sqrt(community_sd.pp^2 + community_sd.psoe^2 + community_sd.ciudadanos^2 + community_sd.up^2)
+
+province_sd.pp <- pp_swingmodel.summary$sigma
+province_sd.psoe <- psoe_swingmodel.summary$sigma
+province_sd.ciudadanos <- ciudadanos_swingmodel.summary$sigma
+province_sd.up <- up_swingmodel.summary$sigma
+province_sd.vox <- sqrt(province_sd.pp^2 + province_sd.psoe^2 + province_sd.ciudadanos^2 + province_sd.up^2)
+
+## Simulate!
 province_sims <- rep(list(simulated_swings), 52)
 province_seatsims <- vector("list", 52)
 
+set.seed(2019)
 for(i in 1:52) {
-  ## Distribute initial seats
+  ## Uniform national swing
   province_sims[[i]] <- pmax(province_sims[[i]] + results_2016.wide[i,], 0)
-  province_sims[[i]][10,] <- ((1 - colSums(province_sims[[i]][1:9,], na.rm = TRUE)) + province_sims[[i]][10,])/2
+  
+  ## Add province-level noise
+  province_sims[[i]][1,] <- province_sims[[i]][1,] + rnorm(n.iter, 0, province_sd.pp) 
+  province_sims[[i]][2,] <- province_sims[[i]][2,] + rnorm(n.iter, 0, province_sd.psoe) 
+  province_sims[[i]][3,] <- province_sims[[i]][3,] + rnorm(n.iter, 0, province_sd.up) 
+  province_sims[[i]][4,] <- province_sims[[i]][4,] + rnorm(n.iter, 0, province_sd.ciudadanos) 
+  province_sims[[i]][10,] <- ((1 - colSums(province_sims[[i]][1:9,], na.rm = TRUE)) + province_sims[[i]][10,])/2 + rnorm(n.iter, 0, province_sd.vox)
+  
+  ## Add community-level noise
+  if(i %in% c(1,9,12,13,14,15,17,18,22,31,35,37,41,42,43,46,47,48,51,52)) {
+    province_sims[[i]][1,] <- province_sims[[i]][1,] + rnorm(n.iter, 0, community_sd.pp) 
+    province_sims[[i]][2,] <- province_sims[[i]][2,] + rnorm(n.iter, 0, community_sd.psoe) 
+    province_sims[[i]][3,] <- province_sims[[i]][3,] + rnorm(n.iter, 0, community_sd.up) 
+    province_sims[[i]][4,] <- province_sims[[i]][4,] + rnorm(n.iter, 0, community_sd.ciudadanos) 
+    province_sims[[i]][10,] <- province_sims[[i]][10,] + rnorm(n.iter, 0, community_sd.vox)
+  }
   province_sims[[i]][province_sims[[i]] < 0.03] <- 0
   province_seatsims[[i]] <- floor(province_sims[[i]]*provincial_seats[i])
   province_sims[[i]] <- province_sims[[i]]/rep(colSums(province_sims[[i]], na.rm = TRUE), each = 10)
@@ -110,11 +144,6 @@ for(i in 1:52) {
 }
 
 ## Reshape into tibble
-provinces_ordered <- results_2016 %>%
-  dplyr::select(list, pct) %>%
-  spread(list, pct) %>%
-  ungroup()
-
 province_simulations_list <- province_seatsims %>%
   lapply(t) %>%
   lapply(as.data.frame) %>%
