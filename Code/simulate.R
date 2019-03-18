@@ -45,6 +45,7 @@ simulated_swings <- simulations - results_2016.national
 
 ## Projecting regional party swings
 source("Code/regional_performance_estimation.R")
+source("Code/swing_variance.R")
 simulated_swings[9,] <- predict(regional_model_list[[1]], newdata = data.frame(national_vote = simulated_swings[9,]))
 simulated_swings[5,] <- predict(regional_model_list[[2]], newdata = data.frame(national_vote = simulated_swings[5,]))
 simulated_swings[6,] <- predict(regional_model_list[[2]], newdata = data.frame(national_vote = simulated_swings[6,]))
@@ -151,3 +152,35 @@ distributions <- simulation_results.natl %>%
             pct_95 = quantile(seats, 0.95))
 
 distributions
+
+## Community distributions
+community_means <- province_simulations_tbl %>%
+  mutate(community_name = case_when(community_name %in% c("Ceuta", "Melilla") ~ "Ceuta and Melilla",
+                                    !(community_name %in% c("Ceuta", "Melilla")) ~ community_name)) %>%
+  group_by(party, community_name, sim_number) %>%
+  summarise(seats = sum(seats, na.rm = TRUE)) %>%
+  group_by(party, community_name) %>%
+  summarise(mean_seats = round(mean(seats, na.rm = TRUE))) %>%
+  spread(party, mean_seats)
+
+community_pct5 <- province_simulations_tbl %>%
+  mutate(community_name = case_when(community_name %in% c("Ceuta", "Melilla") ~ "Ceuta and Melilla",
+                                    !(community_name %in% c("Ceuta", "Melilla")) ~ community_name)) %>%
+  group_by(party, community_name, sim_number) %>%
+  summarise(seats = sum(seats, na.rm = TRUE)) %>%
+  group_by(party, community_name) %>%
+  summarise(pct5_seats = quantile(seats, 0.05, na.rm = TRUE)) %>%
+  spread(party, pct5_seats)
+
+community_pct95 <- province_simulations_tbl %>%
+  mutate(community_name = case_when(community_name %in% c("Ceuta", "Melilla") ~ "Ceuta and Melilla",
+                                    !(community_name %in% c("Ceuta", "Melilla")) ~ community_name)) %>%
+  group_by(party, community_name, sim_number) %>%
+  summarise(seats = sum(seats, na.rm = TRUE)) %>%
+  group_by(party, community_name) %>%
+  summarise(mean_seats = round(mean(seats, na.rm = TRUE))) %>%
+  spread(party, mean_seats)
+
+names(provincial_medians)[2:11] <- paste0(names(provincial_pct5)[2:11], "_median")
+names(provincial_pct5)[2:11] <- paste0(names(provincial_pct5)[2:11], "_pct5")
+names(provincial_pct95)[2:11] <- paste0(names(provincial_pct95)[2:11], "_pct95")

@@ -12,6 +12,7 @@ library(reshape2)
 library(tidyverse)
 
 ## Simulation
+library(lme4)
 library(mvnfast)
 library(Rfast)
 
