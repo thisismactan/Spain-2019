@@ -1,6 +1,10 @@
 ## Estimating historical polling error
 source("Code/poll_scrape_clean.R") # get polls
 
+## Community and province keys
+community_key <- read_csv("Data/community_key.csv")
+province_key <- read_csv("Data/province_key.csv")
+
 #### 2011 ####
 results_2011.natl <- process_spain_data(2011) %>%
   left_join(community_key) %>%

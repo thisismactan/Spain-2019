@@ -31,11 +31,13 @@ community_shapes2 <- community_shapes %>%
                                                   catalan_republican_pct5, "–", catalan_republican_pct95, ")</font><br>",
                                                   "<font color = '#00CED1'><b>PDeCAT</b>: ", catalan_european_democrat_median, " (",
                                                   catalan_european_democrat_pct5, "–", catalan_european_democrat_pct95, ")</font>"),
-           community_name %in% c("Basque Country", "Navarre") ~ paste0(community_info, "<font color = '#228B22'><b>PNV</b>: ",
-                                                                       basque_nationalist_median, " (", basque_nationalist_pct5, "–",
-                                                                       basque_nationalist_pct95, ")</font><br>",
-                                                                       "<font color = #FF1493><b>EH Bildu</b>: ", eh_bildu_median,
-                                                                       " (", eh_bildu_pct5, "–", eh_bildu_pct95, ")</font>"),
+           community_name == "Basque Country" ~ paste0(community_info, "<font color = '#228B22'><b>Basque Nationalist</b>: ",
+                                                       basque_nationalist_median, " (", basque_nationalist_pct5, "–",
+                                                       basque_nationalist_pct95, ")</font><br>",
+                                                       "<font color = #FF1493><b>EH Bildu</b>: ", eh_bildu_median, " (", eh_bildu_pct5, "–", 
+                                                       eh_bildu_pct95, ")</font>"),
+           community_name == "Navarre" ~ paste0(community_info, "<font color = #FF1493><b>EH Bildu</b>: ", eh_bildu_median, " (", eh_bildu_pct5, "–", 
+                                                eh_bildu_pct95, ")</font>"),
            community_name == "Canary Islands" ~ paste0(community_info, "<font color = 'orange'><b>Canarian Coalition</b>: ",
                                                        canarian_coalition_median, " (", canarian_coalition_pct5, "–",
                                                        canarian_coalition_pct95, ")</font>"), 
@@ -60,4 +62,4 @@ province_shapes <- readOGR(dsn = "Data/Shapefiles", layer = "ESP_adm2", stringsA
   
 ## Map
 leaflet(community_shapes2) %>%
-  addPolygons(weight = 1, opacity = 1, color = "#666666", label = ~community_name, popup = ~community_info, group = "Seats") %>%
+  addPolygons(weight = 1, opacity = 1, color = "#666666", label = ~community_name, popup = ~community_info, group = "Seats")

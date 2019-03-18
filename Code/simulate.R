@@ -1,5 +1,6 @@
 #### Simulation ####
 source("Code/historical_polling_error.R")
+source("Code/process_results.R")
 
 ## Polling average
 poll_average <- polls_2019.logit_long %>%
@@ -183,14 +184,14 @@ distributions <- simulation_results.natl %>%
 distributions
 
 ## Community distributions
-community_medians <- province_simulations_tbl %>%
+community_means <- province_simulations_tbl %>%
   mutate(community_name = case_when(community_name %in% c("Ceuta", "Melilla") ~ "Ceuta and Melilla",
                                     !(community_name %in% c("Ceuta", "Melilla")) ~ community_name)) %>%
   group_by(party, community_name, sim_number) %>%
   summarise(seats = sum(seats, na.rm = TRUE)) %>%
   group_by(party, community_name) %>%
-  summarise(median_seats = median(seats, na.rm = TRUE)) %>%
-  spread(party, median_seats)
+  summarise(mean_seats = mean(seats, na.rm = TRUE)) %>%
+  spread(party, mean_seats)
 
 community_pct5 <- province_simulations_tbl %>%
   mutate(community_name = case_when(community_name %in% c("Ceuta", "Melilla") ~ "Ceuta and Melilla",
@@ -210,6 +211,6 @@ community_pct95 <- province_simulations_tbl %>%
   summarise(pct95_seats = quantile(seats, 0.95, na.rm = TRUE)) %>%
   spread(party, pct95_seats)
 
-names(community_medians)[2:11] <- paste0(names(community_medians)[2:11], "_median")
+names(community_means)[2:11] <- paste0(names(community_means)[2:11], "_mean")
 names(community_pct5)[2:11] <- paste0(names(community_pct5)[2:11], "_pct5")
 names(community_pct95)[2:11] <- paste0(names(community_pct95)[2:11], "_pct95")

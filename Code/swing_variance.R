@@ -1,6 +1,12 @@
 ## What's the distribution of province-level swings from 2015 to 2016
 source("Code/process_results.R")
 
+results_1516 <- bind_rows(results_2015, results_2016) %>%
+  arrange(community, province, list, year) %>%
+  group_by(community, province, community_name, province_name, list) %>%
+  mutate(lag_pct = lag(pct)) %>%
+  ungroup()
+
 swings <- results_1516 %>%
   na.omit() %>%
   filter(list %in% c("pp", "psoe", "ciudadanos", "up")) %>%
