@@ -5,8 +5,8 @@ account: mactan
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 798820
-bundleId: 1949663
+bundleId: 1951050
 url: https://mactan.shinyapps.io/spain-2019/
-when: 1552983385.07891
+when: 1553022678.76829
 asMultiple: FALSE
 asStatic: FALSE
