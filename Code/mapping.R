@@ -10,8 +10,8 @@ community_shapes <- readOGR(dsn = "Data/Shapefiles", layer = "ESP_adm1", strings
                             "Basque Country", "Asturias", "Murcia")) %>%
   left_join(community_key %>%
               slice(1:18) %>%
-              mutate(case_when(community_name == "Ceuta" ~ "Ceuta and Melilla",
-                               community_name != "Ceuta" ~ community_name)), 
+              mutate(community_name = case_when(community_name == "Ceuta" ~ "Ceuta and Melilla",
+                                                community_name != "Ceuta" ~ community_name)), 
             by = "community_name") 
 
 community_shapes2 <- community_shapes %>%
@@ -46,6 +46,8 @@ community_shapes2 <- community_shapes %>%
   ## Colors
   mutate(max_seats = pmax(pp_mean, psoe_mean, up_mean, ciudadanos_mean, vox_mean, catalan_republican_mean, catalan_european_democrat_mean,
                           basque_nationalist_mean, eh_bildu_mean, canarian_coalition_mean, na.rm = TRUE),
+         total_seats = pp_mean + psoe_mean + up_mean + ciudadanos_mean + vox_mean + catalan_republican_mean + catalan_european_democrat_mean +
+           basque_nationalist_mean + eh_bildu_mean + canarian_coalition_mean,
          color = case_when(pp_mean == max_seats ~ "#008CD7",
                            psoe_mean == max_seats ~ "red",
                            up_mean == max_seats ~ "#683064",
@@ -55,7 +57,8 @@ community_shapes2 <- community_shapes %>%
                            catalan_european_democrat_mean == max_seats ~ "darkturquoise",
                            basque_nationalist_mean == max_seats ~ "forestgreen",
                            eh_bildu_mean == max_seats ~ "deeppink",
-                           canarian_coalition_mean == max_seats ~ "yellow"))
+                           canarian_coalition_mean == max_seats ~ "yellow"),
+         opacity = 4*(max_seats/total_seats - 0.2))
 
 #### Provinces ####
 province_shapes <- readOGR(dsn = "Data/Shapefiles", layer = "ESP_adm2", stringsAsFactors = FALSE) %>%
@@ -74,7 +77,6 @@ province_shapes2 <- province_shapes %>%
   left_join(province_means, by = "province_name") %>%
   left_join(province_pct5, by = "province_name") %>%
   left_join(province_pct95, by = "province_name") %>%
-  
   mutate(province_info = paste0(
     "<b><u>", province_name, "</b></u><br>", 
     "<font color = '#008CD7'><b>PP</b>: ", round(100*pp_vote_mean, 1), "% (",  round(100*pp_vote_pct5, 1), "% – ", round(100*pp_vote_pct95, 1), 
@@ -108,7 +110,6 @@ province_shapes2 <- province_shapes %>%
                     round(100*canarian_coalition_vote_pct5, 1), "% – ", round(100*canarian_coalition_vote_pct95, 1), "%)</font>"), 
            !(province_name %in% c("Barcelona", "Girona (Gerona)", "Lleida (Lérida)", "Tarragona", "Araba - Álava", "Bizkaia (Vizcaya)", 
                                   "Gipuzkoa (Guipúzcoa)", "Navarre", "Santa Cruz de Tenerife", "Las Palmas")) ~ province_info)) %>%
-  
   ## Colors
   mutate(max_vote = pmax(pp_vote_mean, psoe_vote_mean, up_vote_mean, ciudadanos_vote_mean, vox_vote_mean, catalan_republican_vote_mean, 
                          catalan_european_democrat_vote_mean, basque_nationalist_vote_mean, eh_bildu_vote_mean, canarian_coalition_vote_mean, na.rm = TRUE),
@@ -121,16 +122,17 @@ province_shapes2 <- province_shapes %>%
                            catalan_european_democrat_vote_mean == max_vote ~ "darkturquoise",
                            basque_nationalist_vote_mean == max_vote ~ "forestgreen",
                            eh_bildu_vote_mean == max_vote ~ "deeppink",
-                           canarian_coalition_vote_mean == max_vote ~ "yellow"))
+                           canarian_coalition_vote_mean == max_vote ~ "yellow"),
+         opacity = 4*(max_vote - 0.25) + 0.3)
 
 #### Mapping ####
 leaflet() %>%
-  addPolygons(data = community_shapes2, weight = 1, opacity = 1, color = "#666666", fillOpacity = 1, fillColor = ~color, label = ~community_name, 
+  addPolygons(data = community_shapes2, weight = 1, opacity = 1, color = "#666666", fillOpacity = ~opacity, fillColor = ~color, label = ~community_name, 
               popup = ~community_info, group = "Seats (community)") %>%
-  addPolygons(data = province_shapes2, weight = 1, opacity = 1, color = "#666666", fillOpacity = 1, fillColor = ~color, label = ~province_name,
+  addPolygons(data = province_shapes2, weight = 1, opacity = 1, color = "#666666", fillOpacity = ~opacity, fillColor = ~color, label = ~province_name,
               popup = ~province_info, group = "Vote (province)") %>%
   addLayersControl(
     baseGroups = c("Seats (community)", "Vote (province)"),
-    position = "bottomleft",
-    options = layersControlOptions(collapsed = TRUE)
+    position = "topleft",
+    options = layersControlOptions(collapsed = FALSE)
   )
