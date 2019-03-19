@@ -61,19 +61,76 @@ community_shapes2 <- community_shapes %>%
 province_shapes <- readOGR(dsn = "Data/Shapefiles", layer = "ESP_adm2", stringsAsFactors = FALSE) %>%
   st_as_sf() %>%
   ms_simplify() %>%
-  mutate(province_name = c("Almería", "Cádiz", "Córdoba", "Granada", "Huleva", "Jaén", "Málaga", "Sevilla", "Huesca", "Teruel", "Zaragoza",
+  mutate(province_name = c("Almería", "Cádiz", "Córdoba", "Granada", "Huelva", "Jaén", "Málaga", "Sevilla", "Huesca", "Teruel", "Zaragoza",
                            "Cantabria (Santander)", "Albacete", "Ciudad Real", "Cuenca", "Guadalajara", "Toledo", "Ávila", "Burgos", "León", 
                            "Palencia", "Salamanca", "Segovia", "Soria", "Valladolid", "Zamora", "Barcelona", "Girona (Gerona)", "Lleida (Lérida)",
                            "Tarragona", "Ceuta", "Melilla", "Madrid", "Navarra", "Alicante", "Castellón / Castelló", "Valencia / València",
-                           "Badajoz", "Cáceres", "A Coruña", "Lugo", "Ourense", "Pontevedra", "Illes Balears (Baleares)", "Las Palmas",
+                           "Badajoz", "Cáceres", "A Coruña", "Lugo", "Ourense (Orense)", "Pontevedra", "Illes Balears (Baleares)", "Las Palmas",
                            "Santa Cruz de Tenerife", "La Rioja (Logroño)", "Araba - Álava", "Gipuzkoa (Guipúzcoa)", "Bizkaia (Vizcaya)",
-                           "Asturias (Oviedo)", "Murcia")) %>%
+                           "Asturias (Oviedo)", "Murcia")) 
+
+province_shapes2 <- province_shapes %>%
   left_join(province_key, by = "province_name") %>%
-  left_join(provincial_medians, by = "province_name") %>%
-  left_join(provincial_pct5, by = "province_name") %>%
-  left_join(provincial_pct95, by = "province_name")
+  left_join(province_means, by = "province_name") %>%
+  left_join(province_pct5, by = "province_name") %>%
+  left_join(province_pct95, by = "province_name") %>%
+  
+  mutate(province_info = paste0(
+    "<b><u>", province_name, "</b></u><br>", 
+    "<font color = '#008CD7'><b>PP</b>: ", round(100*pp_vote_mean, 1), "% (",  round(100*pp_vote_pct5, 1), "% – ", round(100*pp_vote_pct95, 1), 
+    "%)</font><br>",
+    "<font color = 'red'><b>PSOE</b>: ", round(100*psoe_vote_mean, 1), "% (",  round(100*psoe_vote_pct5, 1), "% – ", round(100*psoe_vote_pct95, 1), 
+    "%)</font><br>",
+    "<font color = '#683064'><b>Unidos Podemos</b>: ", round(100*up_vote_mean, 1), "% (",  round(100*up_vote_pct5, 1), "% – ", round(100*up_vote_pct95, 1), 
+    "%)</font><br>",
+    "<font color = '#FA5000'><b>Ciudadanos</b>: ", round(100*ciudadanos_vote_mean, 1), "% (", round(100*ciudadanos_vote_pct5, 1), "% – ", 
+    round(100*ciudadanos_vote_pct95, 1), "%)</font><br>",
+    "<font color = '#5AC035'><b>Vox</b>: ", round(100*vox_vote_mean, 1), "% (",  round(100*vox_vote_pct5, 1), "% – ", round(100*vox_vote_pct95, 1), 
+    "%)</font><br>"),
+         province_info = case_when(
+           province_name %in% c("Barcelona", "Girona (Gerona)", "Lleida (Lérida)", "Tarragona") ~ 
+             paste0(province_info, 
+                    "<font color = 'orange'><b>ERC</b>: ", round(100*catalan_republican_vote_mean, 1), "% (",
+                    round(100*catalan_republican_vote_pct5, 1), "% – ", round(100*catalan_republican_vote_pct95, 1), "%)</font><br>",
+                    "<font color = '#00CED1'><b>PDeCAT</b>: ", round(100*catalan_european_democrat_vote_mean, 1), "% (",
+                    round(100*catalan_european_democrat_vote_pct5, 1), "% – ", round(100*catalan_european_democrat_vote_pct95, 1), "%)</font>"),
+           province_name %in% c("Araba - Álava", "Bizkaia (Vizcaya)", "Gipuzkoa (Guipúzcoa)") ~ 
+             paste0(province_info, 
+                    "<font color = '#228B22'><b>Basque Nationalist</b>: ", round(100*basque_nationalist_vote_mean, 1), "% (", 
+                    round(100*basque_nationalist_vote_pct5, 1), "% – ", round(100*basque_nationalist_vote_pct95, 1), "%)</font><br>", 
+                    "<font color = #FF1493><b>EH Bildu</b>: ", round(100*eh_bildu_vote_mean, 1), "% (", round(100*eh_bildu_vote_pct5, 1), "% – ", 
+                    round(100*eh_bildu_vote_pct95, 1), "%)</font>"),
+           province_name == "Navarre" ~ 
+             paste0(province_info, "<font color = #FF1493><b>EH Bildu</b>: ", round(100*eh_bildu_vote_mean, 1), "% (", round(100*eh_bildu_vote_pct5, 1), 
+                    "% – ", round(100*eh_bildu_vote_pct95, 1), "%)</font>"),
+           province_name %in% c("Santa Cruz de Tenerife", "Las Palmas") ~ 
+             paste0(province_info, "<font color = 'orange'><b>Canarian Coalition</b>: ", round(100*canarian_coalition_vote_mean, 1), "% (", 
+                    round(100*canarian_coalition_vote_pct5, 1), "% – ", round(100*canarian_coalition_vote_pct95, 1), "%)</font>"), 
+           !(province_name %in% c("Barcelona", "Girona (Gerona)", "Lleida (Lérida)", "Tarragona", "Araba - Álava", "Bizkaia (Vizcaya)", 
+                                  "Gipuzkoa (Guipúzcoa)", "Navarre", "Santa Cruz de Tenerife", "Las Palmas")) ~ province_info)) %>%
+  
+  ## Colors
+  mutate(max_vote = pmax(pp_vote_mean, psoe_vote_mean, up_vote_mean, ciudadanos_vote_mean, vox_vote_mean, catalan_republican_vote_mean, 
+                         catalan_european_democrat_vote_mean, basque_nationalist_vote_mean, eh_bildu_vote_mean, canarian_coalition_vote_mean, na.rm = TRUE),
+         color = case_when(pp_vote_mean == max_vote ~ "#008CD7",
+                           psoe_vote_mean == max_vote ~ "red",
+                           up_vote_mean == max_vote ~ "#683064",
+                           ciudadanos_vote_mean == max_vote ~ "#FA5000",
+                           vox_vote_mean == max_vote ~ "#5AC035",
+                           catalan_republican_vote_mean == max_vote ~ "gold",
+                           catalan_european_democrat_vote_mean == max_vote ~ "darkturquoise",
+                           basque_nationalist_vote_mean == max_vote ~ "forestgreen",
+                           eh_bildu_vote_mean == max_vote ~ "deeppink",
+                           canarian_coalition_vote_mean == max_vote ~ "yellow"))
 
 #### Mapping ####
-leaflet(community_shapes2) %>%
-  addPolygons(weight = 1, opacity = 1, color = "#666666", fillOpacity = 1, fillColor = ~color, label = ~community_name, popup = ~community_info, 
-              group = "Seats")
+leaflet() %>%
+  addPolygons(data = community_shapes2, weight = 1, opacity = 1, color = "#666666", fillOpacity = 1, fillColor = ~color, label = ~community_name, 
+              popup = ~community_info, group = "Seats (community)") %>%
+  addPolygons(data = province_shapes2, weight = 1, opacity = 1, color = "#666666", fillOpacity = 1, fillColor = ~color, label = ~province_name,
+              popup = ~province_info, group = "Vote (province)") %>%
+  addLayersControl(
+    baseGroups = c("Seats (community)", "Vote (province)"),
+    position = "bottomleft",
+    options = layersControlOptions(collapsed = TRUE)
+  )

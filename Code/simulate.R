@@ -93,7 +93,7 @@ province_sd.vox <- sqrt(province_sd.pp^2 + province_sd.psoe^2 + province_sd.ciud
 
 ## Simulate!
 province_sims <- rep(list(simulated_swings), 52)
-province_seatsims <- vector("list", 52)
+province_seatsims <- province_votesims <- vector("list", 52)
 
 set.seed(2019)
 for(i in 1:52) {
@@ -115,6 +115,10 @@ for(i in 1:52) {
     province_sims[[i]][4,] <- province_sims[[i]][4,] + rnorm(n.iter, 0, community_sd.ciudadanos) 
     province_sims[[i]][10,] <- province_sims[[i]][10,] + rnorm(n.iter, 0, community_sd.vox)
   }
+  
+  ## Record "actual" vote shares before recalculating
+  province_votesims[[i]] <- province_sims[[i]]/rep(colSums(province_sims[[i]], na.rm = TRUE), each = 10)
+  
   province_sims[[i]][province_sims[[i]] < 0.03] <- 0
   province_seatsims[[i]] <- floor(province_sims[[i]]*provincial_seats[i])
   province_sims[[i]] <- province_sims[[i]]/rep(colSums(province_sims[[i]], na.rm = TRUE), each = 10)
@@ -214,3 +218,43 @@ community_pct95 <- province_simulations_tbl %>%
 names(community_means)[2:11] <- paste0(names(community_means)[2:11], "_mean")
 names(community_pct5)[2:11] <- paste0(names(community_pct5)[2:11], "_pct5")
 names(community_pct95)[2:11] <- paste0(names(community_pct95)[2:11], "_pct95")
+
+## Votes by province
+province_vote_simulations <- province_votesims %>%
+  lapply(t) %>%
+  lapply(as.data.frame) %>%
+  lapply(as.tbl)
+
+for(i in 1:52) {
+  province_vote_simulations[[i]] <- province_vote_simulations[[i]] %>%
+    mutate(sim_number = 1:n(),
+           community = provinces_ordered$community[i],
+           community_name = provinces_ordered$community_name[i],
+           province = provinces_ordered$province[i],
+           province_name = provinces_ordered$province_name[i])
+}
+
+province_vote_simulation_tbl <- bind_rows(province_vote_simulations) %>%
+  dplyr::select(community, province, community_name, province_name, sim_number, everything()) %>%
+  melt(id.vars = c("community", "province", "community_name", "province_name", "sim_number"),
+       variable.name = "party", value.name = "pct") %>%
+  as.tbl()
+
+province_means <- province_vote_simulation_tbl %>%
+  group_by(party, province_name) %>%
+  summarise(mean_vote = mean(pct, na.rm = TRUE)) %>%
+  spread(party, mean_vote)
+
+province_pct5 <- province_vote_simulation_tbl %>%
+  group_by(party, province_name) %>%
+  summarise(pct5_vote = quantile(pct, 0.05, na.rm = TRUE)) %>%
+  spread(party, pct5_vote)
+
+province_pct95 <- province_vote_simulation_tbl %>%
+  group_by(party, province_name) %>%
+  summarise(pct95_vote = quantile(pct, 0.95, na.rm = TRUE)) %>%
+  spread(party, pct95_vote)
+
+names(province_means)[2:11] <- paste0(names(province_means)[2:11], "_vote_mean")
+names(province_pct5)[2:11] <- paste0(names(province_pct5)[2:11], "_vote_pct5")
+names(province_pct95)[2:11] <- paste0(names(province_pct95)[2:11], "_vote_pct95")
