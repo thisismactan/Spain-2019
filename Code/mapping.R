@@ -58,7 +58,7 @@ community_shapes2 <- community_shapes %>%
                            basque_nationalist_mean == max_seats ~ "forestgreen",
                            eh_bildu_mean == max_seats ~ "deeppink",
                            canarian_coalition_mean == max_seats ~ "yellow"),
-         opacity = 4*(max_seats/total_seats - 0.2))
+         opacity = (4*(max_seats/total_seats - 0.2))^1.5)
 
 #### Provinces ####
 province_shapes <- readOGR(dsn = "Data/Shapefiles", layer = "ESP_adm2", stringsAsFactors = FALSE) %>%
@@ -123,7 +123,7 @@ province_shapes2 <- province_shapes %>%
                            basque_nationalist_vote_mean == max_vote ~ "forestgreen",
                            eh_bildu_vote_mean == max_vote ~ "deeppink",
                            canarian_coalition_vote_mean == max_vote ~ "yellow"),
-         opacity = 4*(max_vote - 0.25) + 0.3)
+         opacity = (4*(max_vote - 0.25) + 0.3)^1.5)
 
 #### Mapping ####
 leaflet() %>%
