@@ -117,6 +117,7 @@ for(i in 1:52) {
   }
   
   ## Record "actual" vote shares before recalculating
+  province_sims[[i]][province_sims[[i]] < 0] <- 0
   province_votesims[[i]] <- province_sims[[i]]/rep(colSums(province_sims[[i]], na.rm = TRUE), each = 10)
   
   province_sims[[i]][province_sims[[i]] < 0.03] <- 0
