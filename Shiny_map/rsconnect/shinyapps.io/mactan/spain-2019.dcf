@@ -1,0 +1,12 @@
+name: spain-2019
+title: spain-2019
+username:
+account: mactan
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 798820
+bundleId: 1949523
+url: https://mactan.shinyapps.io/spain-2019/
+when: 1552976892.67322
+asMultiple: FALSE
+asStatic: FALSE
