@@ -1,4 +1,8 @@
 #### LIBRARIES ####
+if(!require(tidyverse)) {
+  install.packages(c("httr", "xml2", "data.table", "Hmisc", "lubridate", "reshape2", "tidyverse", "lme4", "mvnfast", "Rfast", "leaflet",
+                     "rgdal", "rmapshaper", "sf", "sp"))
+}
 
 ## Scraping
 library(httr)
