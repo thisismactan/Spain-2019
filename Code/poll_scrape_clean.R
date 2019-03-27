@@ -22,8 +22,9 @@ polls_2019.dirty <- rvest::html_nodes(polls_GET, css = "table")[1] %>%
   slice(-1) %>%
   filter(Fieldwork.date != "", Polling.firm.Commissioner != "2016 general election")
 
-names(polls_2019.dirty) <- c("pollster", "dates", "n", "projected_turnout", "pp", "psoe", "up", "ciudadanos", "catalan_republican", "catalan_european_democrat",
-                             "basque_nationalist", "animalist", "eh_bildu", "canarian_coalition", "vox", "compromis", "lead")
+names(polls_2019.dirty) <- c("pollster", "dates", "n", "projected_turnout", "pp", "psoe", "up", "ciudadanos", "catalan_republican", 
+                             "catalan_european_democrat", "basque_nationalist", "animalist", "eh_bildu", "canarian_coalition", "vox", 
+                             "compromis", "junts_catalunya", "lead")
 
 ## Parse fieldwork dates
 poll_dates <- polls_2019.dirty$dates %>%
@@ -53,8 +54,8 @@ start_dates <- unlist(start_dates) %>% as.Date(format = "%e %b %Y")
 end_dates <- unlist(end_dates) %>% as.Date(format = "%e %b %Y")
 
 ## Clean up
-party_vars <- c("pp", "psoe", "up", "ciudadanos", "catalan_republican", "catalan_european_democrat", "basque_nationalist",
-                "eh_bildu", "canarian_coalition", "vox")
+party_vars <- c("pp", "psoe", "up", "ciudadanos", "catalan_republican", "junts_catalunya", "basque_nationalist",
+                "eh_bildu", "canarian_coalition", "vox", "catalan_european_democrat")
 
 polls_2019 <- polls_2019.dirty %>%
   mutate(pollster = gsub("\\[.*?\\]", "", pollster),
@@ -74,7 +75,13 @@ polls_2019 <- polls_2019.dirty %>%
   distinct(dates, n, .keep_all = TRUE) %>%
   dplyr::select(pollster, median_date, date_spread, age, n, party_vars) %>%
   arrange(age) %>%
-  mutate(weight = 100*(age < 60)/(exp(age^0.3)*sqrt(sqrt(0.25/n))*sqrt(abs(date_spread - 5) + 1))) 
+  mutate(weight = 100*(age < 60)/(exp(age^0.3)*sqrt(sqrt(0.25/n))*sqrt(abs(date_spread - 5) + 1)),
+         junts_catalunya = case_when(is.na(junts_catalunya) ~ catalan_european_democrat,
+                                     is.na(catalan_european_democrat) ~ junts_catalunya)) %>%
+  dplyr::select(-catalan_european_democrat)
+
+party_vars <- c("pp", "psoe", "up", "ciudadanos", "catalan_republican", "junts_catalunya", "basque_nationalist",
+                "eh_bildu", "canarian_coalition", "vox")
 
 ## To long (as well as on logit scale)
 polls_2019.long <- polls_2019 %>%
@@ -112,8 +119,7 @@ polls_2016.dirty <- rvest::html_nodes(polls_GET.old, css = "table")[1] %>%
   filter(Fieldwork.date != "", Polling.firm.Commissioner != "2016 general election")
 
 names(polls_2016.dirty) <- c("pollster", "dates", "n", "projected_turnout", "pp", "psoe", "podemos", "ciudadanos", "iu", "catalan_republican", 
-                             "democracy_freedom", "basque_nationalist", "animalist", "eh_bildu", "canarian_coalition", "galician_nationalist",
-                             "up", "lead")
+                             "democracy_freedom", "basque_nationalist", "animalist", "eh_bildu", "canarian_coalition", "up", "lead")
 
 ## Parse fieldwork dates
 poll_dates <- polls_2016.dirty$dates %>%
@@ -144,7 +150,7 @@ end_dates <- unlist(end_dates) %>% as.Date(format = "%e %b %Y")
 
 ## Clean up
 party_vars <- c("pp", "psoe", "ciudadanos", "catalan_republican", "democracy_freedom", "basque_nationalist", 
-                "animalist", "eh_bildu", "canarian_coalition", "galician_nationalist", "up", "lead")
+                "animalist", "eh_bildu", "canarian_coalition", "up", "lead")
 
 polls_2016 <- polls_2016.dirty %>%
   mutate(pollster = gsub("\\[.*?\\]", "", pollster),

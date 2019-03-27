@@ -172,11 +172,11 @@ error_cov_2016 <- (error_2016 %>%
 
 error_cov <- (error_cov_2011/8 + error_cov_2015/4 + error_cov_2016/3)*(24/17)
 
-## Add in new parties: Catalan European Democrats, Vox (covariance 0)
-catalan_european_democrat <- rep(0, nrow(error_cov))
+## Add in new parties: Junts per Catalunya, Vox (covariance 0)
+junts_catalunya <- rep(0, nrow(error_cov))
 error_cov <- cbind(error_cov, 0)
-catalan_european_democrat <- c(catalan_european_democrat, error_cov[5,5] + error_cov[6,6])
-error_cov <- rbind(error_cov, catalan_european_democrat)
+junts_catalunya <- c(junts_catalunya, error_cov[5,5] + error_cov[6,6])
+error_cov <- rbind(error_cov, junts_catalunya)
 
 vox <- rep(0, nrow(error_cov))
 error_cov <- cbind(error_cov, 0)

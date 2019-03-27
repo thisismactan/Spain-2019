@@ -33,9 +33,8 @@ party_labels <- c("pp" = "People's Party (PP)",
                   "up" = "Unidos Podemos",
                   "ciudadanos" = "Ciudadanos",
                   "catalan_republican" = "Rep. Left of Catalonia (ERC)",
-                  "catalan_european_democrat" = "Catalan Euro. Dem. Party (PDeCAT)",
+                  "junts_catalunya" = "Together for Catalonia (JxCat)",
                   "basque_nationalist" = "Basque National Party (EAJ)",
-                  "animalist" = "Animalist",
                   "eh_bildu" = "EH Bildu",
                   "canarian_coalition" = "Canarian Coalition",
                   "compromis" = "Coalició Compromís",
@@ -48,16 +47,15 @@ party_colors <- c("pp" = "#008CD7",
                   "up" = "#683064",
                   "ciudadanos" = "#FA5000",
                   "catalan_republican" = "gold",
-                  "catalan_european_democrat" = "darkturquoise",
+                  "junts_catalunya" = "deeppink",
                   "basque_nationalist" = "forestgreen",
-                  "animalist" = "darkolivegreen",
-                  "eh_bildu" = "deeppink",
+                  "eh_bildu" = "darkolivegreen",
                   "canarian_coalition" = "yellow",
                   "compromis" = "#E78955",
                   "vox" = "#5AC035")
 
-major_party_labels <- party_labels[c(1:4, 12)]
-major_party_colors <- party_colors[c(1:4, 12)]
+major_party_labels <- party_labels[c(1:4, 11)]
+major_party_colors <- party_colors[c(1:4, 11)]
 
 #### CUSTOM FUNCTIONS ####
 fread_to_tbl <- function(file) {

@@ -31,12 +31,12 @@ community_shapes2 <- community_shapes %>%
          community_info = case_when(
            community_name == "Catalonia" ~ paste0(community_info, "<font color = 'orange'><b>ERC</b>: ", round(catalan_republican_mean), " (",
                                                   catalan_republican_pct5, "–", catalan_republican_pct95, ")</font><br>",
-                                                  "<font color = '#00CED1'><b>PDeCAT</b>: ", round(catalan_european_democrat_mean), " (",
-                                                  catalan_european_democrat_pct5, "–", catalan_european_democrat_pct95, ")</font>"),
+                                                  "<font color = '#FF1493'><b>JxCat</b>: ", round(junts_catalunya_mean), " (",
+                                                  junts_catalunya_pct5, "–", junts_catalunya_pct95, ")</font>"),
            community_name == "Basque Country" ~ paste0(community_info, "<font color = '#228B22'><b>Basque Nationalist</b>: ", 
                                                        round(basque_nationalist_mean), " (", basque_nationalist_pct5, "–", basque_nationalist_pct95, 
-                                                       ")</font><br>", "<font color = #FF1493><b>EH Bildu</b>: ", round(eh_bildu_mean), " (", eh_bildu_pct5, 
-                                                       "–", eh_bildu_pct95, ")</font>"),
+                                                       ")</font><br>", "<font color = '#556B2F'><b>EH Bildu</b>: ", round(eh_bildu_mean), " (", 
+                                                       eh_bildu_pct5, "–", eh_bildu_pct95, ")</font>"),
            community_name == "Navarre" ~ paste0(community_info, "<font color = #FF1493><b>EH Bildu</b>: ", round(eh_bildu_mean), " (", eh_bildu_pct5, "–", 
                                                 eh_bildu_pct95, ")</font>"),
            community_name == "Canary Islands" ~ paste0(community_info, "<font color = 'orange'><b>Canarian Coalition</b>: ", round(canarian_coalition_mean), 
@@ -44,9 +44,9 @@ community_shapes2 <- community_shapes %>%
            !(community_name %in% c("Catalonia", "Basque Country", "Navarre", "Canary Islands")) ~ community_info)) %>%
   
   ## Colors
-  mutate(max_seats = pmax(pp_mean, psoe_mean, up_mean, ciudadanos_mean, vox_mean, catalan_republican_mean, catalan_european_democrat_mean,
+  mutate(max_seats = pmax(pp_mean, psoe_mean, up_mean, ciudadanos_mean, vox_mean, catalan_republican_mean, junts_catalunya_mean,
                           basque_nationalist_mean, eh_bildu_mean, canarian_coalition_mean, na.rm = TRUE),
-         total_seats = pp_mean + psoe_mean + up_mean + ciudadanos_mean + vox_mean + catalan_republican_mean + catalan_european_democrat_mean +
+         total_seats = pp_mean + psoe_mean + up_mean + ciudadanos_mean + vox_mean + catalan_republican_mean + junts_catalunya_mean +
            basque_nationalist_mean + eh_bildu_mean + canarian_coalition_mean,
          color = case_when(pp_mean == max_seats ~ "#008CD7",
                            psoe_mean == max_seats ~ "red",
@@ -54,7 +54,7 @@ community_shapes2 <- community_shapes %>%
                            ciudadanos_mean == max_seats ~ "#FA5000",
                            vox_mean == max_seats ~ "#5AC035",
                            catalan_republican_mean == max_seats ~ "gold",
-                           catalan_european_democrat_mean == max_seats ~ "darkturquoise",
+                           junts_catalunya_mean == max_seats ~ "darkturquoise",
                            basque_nationalist_mean == max_seats ~ "forestgreen",
                            eh_bildu_mean == max_seats ~ "deeppink",
                            canarian_coalition_mean == max_seats ~ "yellow"),
@@ -94,16 +94,16 @@ province_shapes2 <- province_shapes %>%
              paste0(province_info, 
                     "<font color = 'orange'><b>ERC</b>: ", round(100*catalan_republican_vote_mean, 1), "% (",
                     round(100*catalan_republican_vote_pct5, 1), "% – ", round(100*catalan_republican_vote_pct95, 1), "%)</font><br>",
-                    "<font color = '#00CED1'><b>PDeCAT</b>: ", round(100*catalan_european_democrat_vote_mean, 1), "% (",
-                    round(100*catalan_european_democrat_vote_pct5, 1), "% – ", round(100*catalan_european_democrat_vote_pct95, 1), "%)</font>"),
+                    "<font color = '#FF1493'><b>JxCat</b>: ", round(100*junts_catalunya_vote_mean, 1), "% (",
+                    round(100*junts_catalunya_vote_pct5, 1), "% – ", round(100*junts_catalunya_vote_pct95, 1), "%)</font>"),
            province_name %in% c("Araba - Álava", "Bizkaia (Vizcaya)", "Gipuzkoa (Guipúzcoa)") ~ 
              paste0(province_info, 
                     "<font color = '#228B22'><b>Basque Nationalist</b>: ", round(100*basque_nationalist_vote_mean, 1), "% (", 
                     round(100*basque_nationalist_vote_pct5, 1), "% – ", round(100*basque_nationalist_vote_pct95, 1), "%)</font><br>", 
-                    "<font color = #FF1493><b>EH Bildu</b>: ", round(100*eh_bildu_vote_mean, 1), "% (", round(100*eh_bildu_vote_pct5, 1), "% – ", 
+                    "<font color = '#556B2F'><b>EH Bildu</b>: ", round(100*eh_bildu_vote_mean, 1), "% (", round(100*eh_bildu_vote_pct5, 1), "% – ", 
                     round(100*eh_bildu_vote_pct95, 1), "%)</font>"),
            province_name == "Navarre" ~ 
-             paste0(province_info, "<font color = #FF1493><b>EH Bildu</b>: ", round(100*eh_bildu_vote_mean, 1), "% (", round(100*eh_bildu_vote_pct5, 1), 
+             paste0(province_info, "<font color = '#556B2F'><b>EH Bildu</b>: ", round(100*eh_bildu_vote_mean, 1), "% (", round(100*eh_bildu_vote_pct5, 1), 
                     "% – ", round(100*eh_bildu_vote_pct95, 1), "%)</font>"),
            province_name %in% c("Santa Cruz de Tenerife", "Las Palmas") ~ 
              paste0(province_info, "<font color = 'orange'><b>Canarian Coalition</b>: ", round(100*canarian_coalition_vote_mean, 1), "% (", 
@@ -112,16 +112,16 @@ province_shapes2 <- province_shapes %>%
                                   "Gipuzkoa (Guipúzcoa)", "Navarre", "Santa Cruz de Tenerife", "Las Palmas")) ~ province_info)) %>%
   ## Colors
   mutate(max_vote = pmax(pp_vote_mean, psoe_vote_mean, up_vote_mean, ciudadanos_vote_mean, vox_vote_mean, catalan_republican_vote_mean, 
-                         catalan_european_democrat_vote_mean, basque_nationalist_vote_mean, eh_bildu_vote_mean, canarian_coalition_vote_mean, na.rm = TRUE),
+                         junts_catalunya_vote_mean, basque_nationalist_vote_mean, eh_bildu_vote_mean, canarian_coalition_vote_mean, na.rm = TRUE),
          color = case_when(pp_vote_mean == max_vote ~ "#008CD7",
                            psoe_vote_mean == max_vote ~ "red",
                            up_vote_mean == max_vote ~ "#683064",
                            ciudadanos_vote_mean == max_vote ~ "#FA5000",
                            vox_vote_mean == max_vote ~ "#5AC035",
                            catalan_republican_vote_mean == max_vote ~ "gold",
-                           catalan_european_democrat_vote_mean == max_vote ~ "darkturquoise",
+                           junts_catalunya_vote_mean == max_vote ~ "deeppink",
                            basque_nationalist_vote_mean == max_vote ~ "forestgreen",
-                           eh_bildu_vote_mean == max_vote ~ "deeppink",
+                           eh_bildu_vote_mean == max_vote ~ "darkolivegreen",
                            canarian_coalition_vote_mean == max_vote ~ "yellow"),
          opacity = (4*(max_vote - 0.25) + 0.3)^1.5)
 

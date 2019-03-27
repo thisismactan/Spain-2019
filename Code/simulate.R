@@ -57,9 +57,9 @@ results_2016.wide <- results_2016 %>%
   dplyr::select(list, pct) %>%
   spread(list, pct) %>%
   ungroup() %>%
-  mutate(catalan_european_democrat = `Converg&egrave;ncia Democr&agrave;tica de Catalunya (CDC)`) %>%
+  mutate(junts_catalunya = `Converg&egrave;ncia Democr&agrave;tica de Catalunya (CDC)`) %>%
   dplyr::select(names(means)) %>%
-  replace_na(list(pp = 0, psoe = 0, up = 0, ciudadanos = 0, catalan_republican = NA, catalan_european_democrat = NA, basque_nationalist = NA,
+  replace_na(list(pp = 0, psoe = 0, up = 0, ciudadanos = 0, catalan_republican = NA, junts_catalunya = NA, basque_nationalist = NA,
                   eh_bildu = NA, canarian_coalition = NA, vox = 0)) %>%
   as.matrix()
 
@@ -67,7 +67,7 @@ provincial_seats <- results_2016 %>%
   dplyr::select(list, pct) %>%
   spread(list, pct) %>%
   ungroup() %>%
-  mutate(catalan_european_democrat = NA) %>%
+  mutate(junts_catalunya = NA) %>%
   dplyr::select(province, names(means)) %>%
   left_join(province_key) %>%
   pull(total_seats)
