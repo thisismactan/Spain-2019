@@ -5,8 +5,8 @@ library(shiny)
 library(sf)
 
 ui <- fluidPage(
-  titlePanel(paste0("Simulation results as of ", month(today(), label = TRUE, abbr = FALSE), " ", day(today()), ", ", year(today()))),
-  leafletOutput("forecastmap", height = 800)
+  titlePanel(paste0("Forecast as of ", month(today(), label = TRUE, abbr = FALSE), " ", day(today()), ", ", year(today()))),
+  leafletOutput("forecastmap", height = 1100)
 )
 
 server <- function(input, output) {
@@ -15,10 +15,11 @@ server <- function(input, output) {
   
   output$forecastmap <- renderLeaflet({
     leaflet() %>%
-      addPolygons(data = community_shapes, weight = 1, opacity = 1, color = "#666666", fillOpacity = ~opacity, fillColor = ~color, label = ~community_name, 
+      addPolygons(data = community_shapes, weight = 1, opacity = 1, color = "#444444", fillOpacity = ~opacity, fillColor = ~color, label = ~community_name, 
                   popup = ~community_info, group = "Seats (community)") %>%
-      addPolygons(data = province_shapes, weight = 1, opacity = 1, color = "#666666", fillOpacity = ~opacity, fillColor = ~color, label = ~province_name,
+      addPolygons(data = province_shapes, weight = 1, opacity = 1, color = "#444444", fillOpacity = ~opacity, fillColor = ~color, label = ~province_name,
                   popup = ~province_info, group = "Vote (province)") %>%
+      addTiles(options = tileOptions(opacity = 0.5, fillOpacity = 0.5)) %>%
       addLayersControl(
         baseGroups = c("Seats (community)", "Vote (province)"),
         position = "topleft",
