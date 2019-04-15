@@ -116,6 +116,10 @@ for(i in 1:52) {
     province_sims[[i]][10,] <- province_sims[[i]][10,] + rnorm(n.iter, 0, community_sd.vox)
   }
   
+  if(i %in% 31:34) {
+    province_sims[[i]][10,] <- (province_sims[[i]][10,])/4
+  }
+  
   ## Record "actual" vote shares before recalculating
   province_sims[[i]][province_sims[[i]] < 0] <- 0
   province_votesims[[i]] <- province_sims[[i]]/rep(colSums(province_sims[[i]], na.rm = TRUE), each = 10)

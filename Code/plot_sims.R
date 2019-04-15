@@ -3,6 +3,7 @@ source("Code/simulate.R")
 
 #### National distribution of seats ####
 simulation_results.natl %>%
+  ungroup() %>%
   filter(party %in% names(major_party_labels)) %>%
   ggplot(aes(x = seats, y = ..density.., fill = party)) +
   geom_histogram(binwidth = 1, alpha = 0.7, position = "identity") +
@@ -12,6 +13,7 @@ simulation_results.natl %>%
   
 #### By region ####
 province_simulations_tbl %>%
+  ungroup() %>%
   mutate(region = case_when(community_name %in% c("Andalusia", "Extremadura", "Murcia") ~ "Southern Spain",
                             community_name %in% c("Balearic Islands", "Canary Islands", "Ceuta", "Melilla") ~ "Outlying islands",
                             community_name %in% c("Aragon", "Castile–La Mancha", "Castile and León", "La Rioja", "Madrid") ~ "Castile and Aragon",
@@ -24,6 +26,7 @@ province_simulations_tbl %>%
                             !(region %in% c("Asturias and Cantabria", "Basque Country / Navarre", "Galicia", "Outlying islands", "Valencia")) ~ region)) %>%
   group_by(region, sim_number, party) %>%
   summarise(seats = sum(seats)) %>%
+  ungroup() %>%
   ggplot(aes(x = seats, y = ..density.., fill = party)) +
   facet_wrap(~region, scales = "free_x") +
   geom_histogram(binwidth = 1, alpha = 0.5, position = "identity") +

@@ -329,8 +329,8 @@ start_dates <- unlist(start_dates) %>% as.Date(format = "%e %b %Y")
 end_dates <- unlist(end_dates) %>% as.Date(format = "%e %b %Y")
 
 ## Clean up
-party_vars <- c("projected_turnout", "psoe", "pp", "iu", "ciu", "basque_nationalist", "upyd",
-                "catalan_republican", "galician_nationalist", "canarian_coalition", "amaiur")
+party_vars <- c("psoe", "pp", "iu", "ciu", "basque_nationalist", "upyd", "catalan_republican", "galician_nationalist", 
+                "canarian_coalition", "amaiur")
 
 polls_2011 <- polls_2011.dirty %>%
   mutate(pollster = gsub("\\[.*?\\]", "", pollster),

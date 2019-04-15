@@ -40,8 +40,9 @@ simulation_results.natl %>%
   group_by(sim_number) %>%
   spread(party, seats) %>%
   mutate(`PSOE + UP + Ciudadanos` = psoe + up + ciudadanos > 175,
+         `PSOE + UP + Catalan Republican` = psoe + up + catalan_republican > 175,
          `PP + Ciudadanos + Vox` = pp + ciudadanos + vox > 175) %>%
   ungroup() %>%
-  summarise_at(vars(c("PSOE + UP + Ciudadanos", "PP + Ciudadanos + Vox")), mean) %>%
+  summarise_at(vars(c("PSOE + UP + Ciudadanos", "PSOE + UP + Catalan Republican", "PP + Ciudadanos + Vox")), mean) %>%
   melt(variable.name = "Coalition", value.name = "Prob") %>%
   as.tbl()

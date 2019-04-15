@@ -42,7 +42,7 @@ polls_2019.long %>%
   geom_point(size = 1, alpha = 0.5) +
   geom_smooth(span = 1/3) +
   scale_colour_manual(name = "Candidate / Party", values = party_colors, labels = party_labels) +
-  scale_x_date(date_breaks = "2 months", limits = c(as.Date("2016-06-26"), as.Date("2019-04-28")), date_labels = "%b %Y") +
+  scale_x_date(date_breaks = "months", limits = c(as.Date("2018-10-01"), as.Date("2019-04-28")), date_labels = "%b %Y") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   labs(title = "2019 Spanish general election polling", x = "Date", y = "%",
-       subtitle = paste0("June 26, 2016 - ", month(today(), label =  TRUE, abbr = FALSE), " ", day(today()), ", ", year(today())))
+       subtitle = paste0("October 1, 2018 - ", month(today(), label =  TRUE, abbr = FALSE), " ", day(today()), ", ", year(today())))
