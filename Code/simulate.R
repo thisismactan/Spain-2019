@@ -95,8 +95,10 @@ province_sd.vox <- sqrt(province_sd.pp^2 + province_sd.psoe^2 + province_sd.ciud
 province_sims <- rep(list(simulated_swings), 52)
 province_seatsims <- province_votesims <- vector("list", 52)
 
+start_time <- Sys.time()
 set.seed(2019)
 for(i in 1:52) {
+  cat("Province ", provinces_ordered$province[i], ": ", provinces_ordered$province_name[i], ", ", provinces_ordered$community_name[i], "\n", sep = "")
   ## Uniform national swing
   province_sims[[i]] <- pmax(province_sims[[i]] + results_2016.wide[i,], 0)
   
@@ -152,6 +154,7 @@ for(i in 1:52) {
     counter <- counter + 1
   }
 }
+Sys.time() - start_time
 
 ## Reshape into tibble
 province_simulations_list <- province_seatsims %>%
@@ -200,7 +203,11 @@ community_means <- province_simulations_tbl %>%
   summarise(seats = sum(seats, na.rm = TRUE)) %>%
   group_by(party, community_name) %>%
   summarise(mean_seats = mean(seats, na.rm = TRUE)) %>%
-  spread(party, mean_seats)
+  spread(party, mean_seats) %>%
+  dplyr::select(community_name, pp_mean = pp, psoe_mean = psoe, up_mean = up, ciudadanos_mean = ciudadanos, 
+                catalan_republican_mean = catalan_republican, junts_catalunya_mean = junts_catalunya,
+                basque_nationalist_mean = basque_nationalist, eh_bildu_mean = eh_bildu, 
+                canarian_coalition_mean = canarian_coalition, vox_mean = vox)
 
 community_pct5 <- province_simulations_tbl %>%
   mutate(community_name = case_when(community_name %in% c("Ceuta", "Melilla") ~ "Ceuta and Melilla",
@@ -209,7 +216,11 @@ community_pct5 <- province_simulations_tbl %>%
   summarise(seats = sum(seats, na.rm = TRUE)) %>%
   group_by(party, community_name) %>%
   summarise(pct5_seats = quantile(seats, 0.05, na.rm = TRUE)) %>%
-  spread(party, pct5_seats)
+  spread(party, pct5_seats) %>%
+  dplyr::select(community_name, pp_pct5 = pp, psoe_pct5 = psoe, up_pct5 = up, ciudadanos_pct5 = ciudadanos, 
+                catalan_republican_pct5 = catalan_republican, junts_catalunya_pct5 = junts_catalunya, 
+                basque_nationalist_pct5 = basque_nationalist, eh_bildu_pct5 = eh_bildu, 
+                canarian_coalition_pct5 = canarian_coalition, vox_pct5 = vox)
 
 community_pct95 <- province_simulations_tbl %>%
   mutate(community_name = case_when(community_name %in% c("Ceuta", "Melilla") ~ "Ceuta and Melilla",
@@ -218,11 +229,11 @@ community_pct95 <- province_simulations_tbl %>%
   summarise(seats = sum(seats, na.rm = TRUE)) %>%
   group_by(party, community_name) %>%
   summarise(pct95_seats = quantile(seats, 0.95, na.rm = TRUE)) %>%
-  spread(party, pct95_seats)
-
-names(community_means)[2:11] <- paste0(names(community_means)[2:11], "_mean")
-names(community_pct5)[2:11] <- paste0(names(community_pct5)[2:11], "_pct5")
-names(community_pct95)[2:11] <- paste0(names(community_pct95)[2:11], "_pct95")
+  spread(party, pct95_seats) %>%
+  dplyr::select(community_name, pp_pct95 = pp, psoe_pct95 = psoe, up_pct95 = up, ciudadanos_pct95 = ciudadanos, 
+                catalan_republican_pct95 = catalan_republican, junts_catalunya_pct95 = junts_catalunya, 
+                basque_nationalist_pct95 = basque_nationalist, eh_bildu_pct95 = eh_bildu, 
+                canarian_coalition_pct95 = canarian_coalition, vox_pct95 = vox)
 
 ## Votes by province
 province_vote_simulations <- province_votesims %>%
@@ -248,18 +259,27 @@ province_vote_simulation_tbl <- bind_rows(province_vote_simulations) %>%
 province_means <- province_vote_simulation_tbl %>%
   group_by(party, province_name) %>%
   summarise(mean_vote = mean(pct, na.rm = TRUE)) %>%
-  spread(party, mean_vote)
+  spread(party, mean_vote) %>%
+  dplyr::select(province_name, pp_vote_mean = pp, psoe_vote_mean = psoe, up_vote_mean = up, ciudadanos_vote_mean = ciudadanos, 
+                catalan_republican_vote_mean = catalan_republican, junts_catalunya_vote_mean = junts_catalunya,
+                basque_nationalist_vote_mean = basque_nationalist, eh_bildu_vote_mean = eh_bildu, 
+                canarian_coalition_vote_mean = canarian_coalition, vox_vote_mean = vox)
 
 province_pct5 <- province_vote_simulation_tbl %>%
   group_by(party, province_name) %>%
   summarise(pct5_vote = quantile(pct, 0.05, na.rm = TRUE)) %>%
-  spread(party, pct5_vote)
+  spread(party, pct5_vote) %>%
+  dplyr::select(province_name, pp_vote_pct5 = pp, psoe_vote_pct5 = psoe, up_vote_pct5 = up, ciudadanos_vote_pct5 = ciudadanos, 
+                catalan_republican_vote_pct5 = catalan_republican, junts_catalunya_vote_pct5 = junts_catalunya,
+                basque_nationalist_vote_pct5 = basque_nationalist, eh_bildu_vote_pct5 = eh_bildu, 
+                canarian_coalition_vote_pct5 = canarian_coalition, vox_vote_pct5 = vox)
 
 province_pct95 <- province_vote_simulation_tbl %>%
   group_by(party, province_name) %>%
   summarise(pct95_vote = quantile(pct, 0.95, na.rm = TRUE)) %>%
-  spread(party, pct95_vote)
+  spread(party, pct95_vote) %>%
+  dplyr::select(province_name, pp_vote_pct95 = pp, psoe_vote_pct95 = psoe, up_vote_pct95 = up, ciudadanos_vote_pct95 = ciudadanos, 
+                catalan_republican_vote_pct95 = catalan_republican, junts_catalunya_vote_pct95 = junts_catalunya,
+                basque_nationalist_vote_pct95 = basque_nationalist, eh_bildu_vote_pct95 = eh_bildu, 
+                canarian_coalition_vote_pct95 = canarian_coalition, vox_vote_pct95 = vox)
 
-names(province_means)[2:11] <- paste0(names(province_means)[2:11], "_vote_mean")
-names(province_pct5)[2:11] <- paste0(names(province_pct5)[2:11], "_vote_pct5")
-names(province_pct95)[2:11] <- paste0(names(province_pct95)[2:11], "_vote_pct95")

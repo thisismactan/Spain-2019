@@ -1,7 +1,7 @@
 ## Maps!
 source("Code/simulate.R")
 
-#### Communities ####
+#### Read shapefiles ####
 community_shapes <- readOGR(dsn = "Data/Shapefiles", layer = "ESP_adm1", stringsAsFactors = FALSE) %>%
   st_as_sf() %>%
   ms_simplify() %>%
@@ -14,6 +14,18 @@ community_shapes <- readOGR(dsn = "Data/Shapefiles", layer = "ESP_adm1", strings
                                                 community_name != "Ceuta" ~ community_name)), 
             by = "community_name") 
 
+province_shapes <- readOGR(dsn = "Data/Shapefiles", layer = "ESP_adm2", stringsAsFactors = FALSE) %>%
+  st_as_sf() %>%
+  ms_simplify() %>%
+  mutate(province_name = c("Almería", "Cádiz", "Córdoba", "Granada", "Huelva", "Jaén", "Málaga", "Sevilla", "Huesca", "Teruel", "Zaragoza",
+                           "Cantabria (Santander)", "Albacete", "Ciudad Real", "Cuenca", "Guadalajara", "Toledo", "Ávila", "Burgos", "León", 
+                           "Palencia", "Salamanca", "Segovia", "Soria", "Valladolid", "Zamora", "Barcelona", "Girona (Gerona)", "Lleida (Lérida)",
+                           "Tarragona", "Ceuta", "Melilla", "Madrid", "Navarra", "Alicante", "Castellón / Castelló", "Valencia / València",
+                           "Badajoz", "Cáceres", "A Coruña", "Lugo", "Ourense (Orense)", "Pontevedra", "Illes Balears (Baleares)", "Las Palmas",
+                           "Santa Cruz de Tenerife", "La Rioja (Logroño)", "Araba - Álava", "Gipuzkoa (Guipúzcoa)", "Bizkaia (Vizcaya)",
+                           "Asturias (Oviedo)", "Murcia")) 
+
+#### Communities ####
 community_shapes2 <- community_shapes %>%
   left_join(community_key, by = "community_name") %>%
   left_join(community_means, by = "community_name") %>%
@@ -58,20 +70,9 @@ community_shapes2 <- community_shapes %>%
                            basque_nationalist_mean == max_seats ~ "forestgreen",
                            eh_bildu_mean == max_seats ~ "deeppink",
                            canarian_coalition_mean == max_seats ~ "yellow"),
-         opacity = (4*(max_seats/total_seats - 0.2))^1.5)
+         opacity = ((4*(max_seats/total_seats - 0.2))^1.5)/1.1)
 
 #### Provinces ####
-province_shapes <- readOGR(dsn = "Data/Shapefiles", layer = "ESP_adm2", stringsAsFactors = FALSE) %>%
-  st_as_sf() %>%
-  ms_simplify() %>%
-  mutate(province_name = c("Almería", "Cádiz", "Córdoba", "Granada", "Huelva", "Jaén", "Málaga", "Sevilla", "Huesca", "Teruel", "Zaragoza",
-                           "Cantabria (Santander)", "Albacete", "Ciudad Real", "Cuenca", "Guadalajara", "Toledo", "Ávila", "Burgos", "León", 
-                           "Palencia", "Salamanca", "Segovia", "Soria", "Valladolid", "Zamora", "Barcelona", "Girona (Gerona)", "Lleida (Lérida)",
-                           "Tarragona", "Ceuta", "Melilla", "Madrid", "Navarra", "Alicante", "Castellón / Castelló", "Valencia / València",
-                           "Badajoz", "Cáceres", "A Coruña", "Lugo", "Ourense (Orense)", "Pontevedra", "Illes Balears (Baleares)", "Las Palmas",
-                           "Santa Cruz de Tenerife", "La Rioja (Logroño)", "Araba - Álava", "Gipuzkoa (Guipúzcoa)", "Bizkaia (Vizcaya)",
-                           "Asturias (Oviedo)", "Murcia")) 
-
 province_shapes2 <- province_shapes %>%
   left_join(province_key, by = "province_name") %>%
   left_join(province_means, by = "province_name") %>%
@@ -123,10 +124,12 @@ province_shapes2 <- province_shapes %>%
                            basque_nationalist_vote_mean == max_vote ~ "forestgreen",
                            eh_bildu_vote_mean == max_vote ~ "darkolivegreen",
                            canarian_coalition_vote_mean == max_vote ~ "yellow"),
-         opacity = (4*(max_vote - 0.25) + 0.3)^1.5)
+         opacity = ((4*(max_vote - 0.25) + 0.3)^1.5)/1.1)
 
 #### Mapping ####
 leaflet() %>%
+  addPolygons(data = community_shapes2, weight = 1, opacity = 1, color = "#666666", fillOpacity = ~opacity, fillColor = ~color, label = ~community_name,
+              popup = ~community_info, group = "Seats (community)") %>%
   addPolygons(data = province_shapes2, weight = 1, opacity = 1, color = "#666666", fillOpacity = ~opacity, fillColor = ~color, label = ~province_name,
               popup = ~province_info, group = "Vote (province)") %>%
   addTiles(options = tileOptions(opacity = 0.5, fillOpacity = 0.5)) %>%
