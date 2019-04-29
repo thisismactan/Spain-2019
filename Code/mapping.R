@@ -128,8 +128,6 @@ province_shapes2 <- province_shapes %>%
 
 #### Mapping ####
 leaflet() %>%
-  addPolygons(data = community_shapes2, weight = 1, opacity = 1, color = "#666666", fillOpacity = ~opacity, fillColor = ~color, label = ~community_name,
-              popup = ~community_info, group = "Seats (community)") %>%
   addPolygons(data = province_shapes2, weight = 1, opacity = 1, color = "#666666", fillOpacity = ~opacity, fillColor = ~color, label = ~province_name,
               popup = ~province_info, group = "Vote (province)") %>%
   addTiles(options = tileOptions(opacity = 0.5, fillOpacity = 0.5)) %>%

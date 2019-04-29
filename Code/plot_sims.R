@@ -8,8 +8,12 @@ simulation_results.natl %>%
   ggplot(aes(x = seats, y = ..density.., fill = party)) +
   geom_histogram(binwidth = 1, alpha = 0.7, position = "identity") +
   scale_fill_manual(name = "Party", labels = major_party_labels, values = major_party_colors) +
-  labs(title = "2019 Spanish general election forecast", x = "Seats", y = "Probability",
-       subtitle = paste0(month(today(), label = TRUE, abbr = FALSE), " ", day(today()), ", ", year(today())))
+  geom_vline(data = tibble(party = c("pp", "psoe", "up", "ciudadanos", "vox"),
+                           seats = c(65, 132, 40, 51, 23)),
+             aes(xintercept = seats, col = party), size = 1, show.legend = FALSE) +
+  scale_colour_manual(name = "Party", labels = major_party_labels, values = major_party_colors) +
+  labs(title = "2019 Spanish general election", x = "Seats", y = "Probability",
+       subtitle = "Forecast vs. results, 30% of ballots counted")
   
 #### By region ####
 province_simulations_tbl %>%

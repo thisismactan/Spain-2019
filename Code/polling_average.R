@@ -40,7 +40,7 @@ polls_2019.long %>%
   filter(party %in% names(major_party_labels)) %>%
   ggplot(aes(x = median_date, y = pct, col = party)) +
   geom_point(size = 1, alpha = 0.5) +
-  geom_smooth(span = 1/3) +
+  geom_smooth(span = 0.4) +
   scale_colour_manual(name = "Candidate / Party", values = party_colors, labels = party_labels) +
   scale_x_date(date_breaks = "months", limits = c(as.Date("2018-10-01"), as.Date("2019-04-28")), date_labels = "%b %Y") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +

@@ -46,3 +46,11 @@ simulation_results.natl %>%
   summarise_at(vars(c("PSOE + UP + Ciudadanos", "PSOE + UP + Catalan Republican", "PP + Ciudadanos + Vox")), mean) %>%
   melt(variable.name = "Coalition", value.name = "Prob") %>%
   as.tbl()
+
+## How likely is Vox to be in government? (PP + Ciudadanos + Vox win majority AND no PSOE coalition is viable)
+simulation_results.natl %>%
+  group_by(sim_number) %>%
+  spread(party, seats) %>%
+  mutate(vox_gov = (pp + ciudadanos + vox > 175) & (psoe + ciudadanos + up <= 175) & (psoe + up + catalan_republican <= 175)) %>%
+  ungroup() %>%
+  summarise(prob = mean(vox_gov))

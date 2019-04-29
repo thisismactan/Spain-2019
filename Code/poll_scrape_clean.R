@@ -78,7 +78,8 @@ polls_2019 <- polls_2019.dirty %>%
   mutate(weight = 100*(age < 60)/(exp(age^0.3)*sqrt(sqrt(0.25/n))*sqrt(abs(date_spread - 5) + 1)),
          junts_catalunya = case_when(is.na(junts_catalunya) ~ catalan_european_democrat,
                                      is.na(catalan_european_democrat) ~ junts_catalunya)) %>%
-  dplyr::select(-catalan_european_democrat)
+  dplyr::select(-catalan_european_democrat) %>%
+  filter(!(pollster %in% c("PP", "PSOE", "Podemos", "2019 general election")))
 
 party_vars <- c("pp", "psoe", "up", "ciudadanos", "catalan_republican", "junts_catalunya", "basque_nationalist",
                 "eh_bildu", "canarian_coalition", "vox")

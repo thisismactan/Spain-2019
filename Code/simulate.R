@@ -1,4 +1,5 @@
 #### Simulation ####
+source("Code/polling_average.R")
 source("Code/historical_polling_error.R")
 source("Code/process_results.R")
 
